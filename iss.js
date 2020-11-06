@@ -31,13 +31,13 @@ const fetchMyIP = function(callback) {
       return;
     }
 
-   callback(error, data.ip);
+    callback(error, data.ip);
   });
 };
 
 const fetchCoordsByIP = (ip, callback) => {
   let ipCord = 'http://ip-api.com/json/';
-  request(ipCord+ip, (error, response, body)=> {
+  request(ipCord + ip, (error, response, body)=> {
 
     if (error) {
       callback(error, null);
@@ -56,16 +56,16 @@ const fetchCoordsByIP = (ip, callback) => {
       callback(Error('No Data Found'), null);
       return;
     }
-    let cord = { 
-      latitude: data.lat, 
-      longitude: data.lon }
+    let cord = {
+      latitude: data.lat,
+      longitude: data.lon };
 
     callback(error, cord);
   });
-}
+};
 
 const fetchISSFlyOverTimes = function(coords, callback) {
-  let urlISS = 'http://api.open-notify.org/iss-pass.json?lat='+coords.latitude+'&'+'lon='+coords.longitude
+  let urlISS = 'http://api.open-notify.org/iss-pass.json?lat=' + coords.latitude + '&' + 'lon=' + coords.longitude;
   
   request(urlISS, (error, response, body)=> {
 
@@ -93,34 +93,34 @@ const fetchISSFlyOverTimes = function(coords, callback) {
 /**
  * Orchestrates multiple API requests in order to determine the next 5 upcoming ISS fly overs for the user's current location.
  * Input:
- *   - A callback with an error or results. 
+ *   - A callback with an error or results.
  * Returns (via Callback):
  *   - An error, if any (nullable)
  *   - The fly-over times as an array (null if error):
  *     [ { risetime: <number>, duration: <number> }, ... ]
- */ 
+ */
 const nextISSTimesForMyLocation = function(callback) {
   fetchMyIP((error, ip) => {
     if (error) {
-      return callback(error,null)
+      return callback(error,null);
     }
     
     fetchCoordsByIP(ip,(error, coord)=> {
       if (error) {
-        return callback(error,null)
+        return callback(error,null);
       }
       
       fetchISSFlyOverTimes(coord,(error, timePass)=>{
         if (error) {
-          return callback(error,null)
+          return callback(error,null);
         }
 
-        callback(null, timePass)
-        return
+        callback(null, timePass);
+        return;
 
-      })
-    })
-  })
+      });
+    });
+  });
 };
 
 module.exports = nextISSTimesForMyLocation;
